@@ -1,3 +1,6 @@
+
+#python/title.py
+#递归爬取网站板块的博主 在线人数 url 
 import requests
 from lxml import etree
 
@@ -58,3 +61,5 @@ if __name__ == '__main__':
     for i in range(1,9):
         c =bb.get_page(i)
         bb.bord_list(c)
+        
+    
