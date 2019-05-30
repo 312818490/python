@@ -1,44 +1,42 @@
+## 定额支付宝 脚本
 import pyperclip
-from  selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from time import sleep
-chrome_drive = 'C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe'
-req_url = "https://yeah.hdy1949.com/api/pay_trade?cid=1015&tid=130712171"
-chrome_options=Options()
-#设置chrome浏览器无界面模式
-chrome_options.add_argument('--headless')
+from selenium import webdriver    #  爬虫框架 、
+from time import sleep  #  延时触发
+from selenium.webdriver.chrome.options import Options   # google driver
+import requests
+import re
+from sys import argv
+chrome_drive =  'C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe' #chrome drive 路径
+chrome_options =Options
+chrome_options.add_argument('--headless') ## 无界面模式
 browser = webdriver.Chrome(executable_path=chrome_drive)
-# 开始请求
-browser.get(req_url)
-sleep(5)
-#打印页面网址
-try:
-    url = browser.current_url
-    print(url)
-    bb =browser.find_element_by_xpath('//*[@id="copy_url"]')
-    if url == 'http://www.wap321.cn/Pay_Index.html':
-        print(bb.text)
+class result_text:
+    def first_url(self,o=argv[1]):
+        return o
+    browser.get(first_url())  # 跳转当前url
+    sleep(5)
+    try:
+        url = browser.current_url
+        print('当前url{}'.format(url))
 
-        bb.click()
+        path = browser.find_element_by_xpath('//*[@id="copy_url"]')  # 查找此模块元素
+        path.click()
         browser.switch_to.alert.accept()
-        sleep(2)
+        sleep(1)
         paste = pyperclip.paste()
-        print(paste)
-    else:
-        cc =browser.find_element_by_xpath('//*[@id="payBtn"]')
-        cc_url = cc.click()
+        txt = paste
+        result_url = txt[18:]
+    except Exception as error:
+        print(error)
 
-        paste = pyperclip.paste()
-        print(paste)
+if __name__ == '__main__':
+    r1 = re.compile(r'var a = "(\d*)";')
+    r2 = re.compile(r'var j = "(.*)";')
 
-        #document.querySelector("#copy_url")
-
-
-except Exception:
-    print(Exception)
-
-#关闭浏览器
-browser.close()
-#关闭chromedriver进程
-
-#//*[@id="payBtn"]
+    url = result_text()  # 调用类
+    res = url.result_url # 取得最终跳转url 地址
+    r = requests.get(res)
+    r_text = r.text
+    user_id = r1.findall(r_text)
+    user = r2.findall(r_text)
+    print(user_id,user)
